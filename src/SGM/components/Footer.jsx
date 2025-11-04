@@ -5,14 +5,17 @@ function Footer() {
 useEffect(() => {
   const namespace = "mycollegeportal";
   const key = "lifetime_visits";
+  const url = `https://api.counterapi.dev/hit/${namespace}/${key}`;
 
-  fetch(`https://api.counterapi.dev/hit/${namespace}/${key}`)
+  fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`)
     .then(res => res.json())
     .then(data => {
-      setVisitCount(data.value);
+      const parsed = JSON.parse(data.contents);
+      setVisitCount(parsed.value);
     })
     .catch(err => console.error("CounterAPI error:", err));
 }, []);
+
 
 
   return (
