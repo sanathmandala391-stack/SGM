@@ -317,6 +317,7 @@ function StudentPortal() {
   const [branch, setBranch] = useState("");
   const [pinNumber, setPinNumber] = useState("");
   const [message, setMessage] = useState("");
+  const [email,setEmail]=useState("");
   const [complaintLoading, setComplaintLoading] = useState(false);
 
   // Toggle sidebar menu
@@ -373,7 +374,7 @@ function StudentPortal() {
       const res = await fetch(`${API_URL}/api/complaint`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, branch, pinNumber, message }),
+        body: JSON.stringify({ name, branch, pinNumber,email,message }),
       });
 
       const data = await res.json();
@@ -382,6 +383,7 @@ function StudentPortal() {
         setName("");
         setBranch("");
         setPinNumber("");
+        setEmail("");
         setMessage("");
       } else {
         alert(data.message || "Failed to submit complaint");
@@ -528,6 +530,13 @@ function StudentPortal() {
               onChange={(e) => setPinNumber(e.target.value)}
               required
             />
+            <input
+            style={inputStyle}
+            type="email"
+            placeholder="Enter Your Email"
+            value={email}
+            onChange={(e)=>setEmail(e.target.value)}
+            required/>
             <textarea
               style={{ ...inputStyle, minHeight: isMobile ? 80 : 100 }}
               placeholder="Enter Your Complaint"
