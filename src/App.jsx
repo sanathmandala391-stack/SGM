@@ -2,7 +2,7 @@ import React from "react";
 import LandingPage from "./SGM/pages/LandingPage";
 import { Routes, Route } from "react-router-dom";
 import Courses from "./SGM/pages/Courses";
-import Class from "./SGM/pages/class";
+import Class from "./SGM/pages/Class";
 import Lab from "./SGM/pages/Lab";
 import Facilities from "./SGM/pages/Facilities";
 import Faculty from "./SGM/pages/Faculty";
