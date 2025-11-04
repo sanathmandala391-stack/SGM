@@ -301,29 +301,36 @@ const MOBILE_BREAKPOINT = 768;
 
 function StudentPortal() {
   const navigate = useNavigate();
+
+  // Menu states
   const [open, setOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < MOBILE_BREAKPOINT);
 
+  // Data states
   const [timetables, setTimetables] = useState([]);
   const [notes, setNotes] = useState([]);
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Complaint form states
   const [name, setName] = useState("");
   const [branch, setBranch] = useState("");
   const [pinNumber, setPinNumber] = useState("");
-  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [complaintLoading, setComplaintLoading] = useState(false);
 
+  // Toggle sidebar menu
   const toggleMenu = () => setOpen(!open);
+
+  // Logout
   const logoutHandler = () => {
-    if (window.confirm("Are You Sure You Want To LogOut")) {
+    if (window.confirm("Are you sure you want to log out?")) {
       localStorage.removeItem("loginToken");
       navigate("/login");
     }
   };
 
+  // Fetch data (timetable, notes, notice)
   useEffect(() => {
     async function fetchData() {
       try {
@@ -334,11 +341,15 @@ function StudentPortal() {
           fetch(`${API_URL}/api/getnotice`),
         ]);
 
-        setTimetables(await ttRes.json());
-        setNotes(await notesRes.json());
-        setNotices(await noticeRes.json());
+        const ttData = await ttRes.json();
+        const notesData = await notesRes.json();
+        const noticeData = await noticeRes.json();
+
+        setTimetables(ttData);
+        setNotes(notesData);
+        setNotices(noticeData);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
@@ -346,54 +357,135 @@ function StudentPortal() {
     fetchData();
   }, []);
 
+  // Handle window resize (for responsiveness)
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Submit complaint form
   const handleComplaint = async (e) => {
     e.preventDefault();
     setComplaintLoading(true);
+
     try {
       const res = await fetch(`${API_URL}/api/complaint`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, branch, pinNumber, email, message }),
+        body: JSON.stringify({ name, branch, pinNumber, message }),
       });
+
       const data = await res.json();
       if (res.ok) {
-        alert("Complaint submitted successfully and email sent!");
+        alert("✅ Complaint submitted successfully!");
         setName("");
         setBranch("");
         setPinNumber("");
-        setEmail("");
         setMessage("");
       } else {
-        alert(data.error || "Failed to submit complaint");
+        alert(data.message || "Failed to submit complaint");
       }
     } catch (err) {
       console.error("Error submitting complaint:", err);
+      alert("Error submitting complaint");
     } finally {
       setComplaintLoading(false);
     }
   };
 
+  // --- Inline Styles (Responsive) ---
   const containerStyle = {
     padding: isMobile ? 10 : 20,
+    fontFamily: "Segoe UI, Tahoma, Geneva, Verdana, sans-serif",
     background: "linear-gradient(120deg, #e0f7fa, #e1bee7)",
     minHeight: "100vh",
   };
-  const inputStyle = {
-    width: "100%",
-    padding: 10,
-    marginBottom: 10,
-    borderRadius: 6,
-    border: "1px solid #ccc",
-  };
-  const submitBtnStyle = {
-    background: "#7e57c2",
-    color: "#fff",
-    padding: 10,
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
+
+  const headerStyle = {
+    textAlign: "center",
+    marginBottom: isMobile ? 20 : 40,
   };
 
+  const sectionStyle = { marginBottom: isMobile ? 30 : 50 };
+
+  const cardsContainer = {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: isMobile ? 15 : 20,
+    justifyContent: "center",
+  };
+
+  const card = {
+    background: "rgba(255, 255, 255, 0.9)",
+    borderRadius: 12,
+    padding: isMobile ? 15 : 20,
+    width: isMobile ? "90%" : 250,
+    boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+    transition: "transform 0.3s, box-shadow 0.3s",
+  };
+
+  const cardImage = { width: "100%", borderRadius: 8, marginTop: 10 };
+
+  const downloadBtn = {
+    display: "inline-block",
+    marginTop: 10,
+    padding: isMobile ? "6px 10px" : "8px 12px",
+    background: "#7e57c2",
+    color: "#fff",
+    borderRadius: 8,
+    textDecoration: "none",
+    fontSize: isMobile ? 14 : 16,
+  };
+
+  const headingStyle = {
+    textAlign: "center",
+    background: "#7e57c2",
+    color: "#fff",
+    padding: isMobile ? "8px 0" : "10px 0",
+    borderRadius: 8,
+    marginBottom: isMobile ? 15 : 20,
+    fontSize: isMobile ? "1.5rem" : "2rem",
+  };
+
+  const formStyle = {
+    background: "rgba(255, 255, 255, 0.95)",
+    padding: isMobile ? 20 : 30,
+    borderRadius: 12,
+    maxWidth: isMobile ? "95%" : 500,
+    margin: "0 auto 30px",
+    boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+  };
+
+  const inputStyle = {
+    width: "100%",
+    padding: isMobile ? 8 : 10,
+    marginBottom: isMobile ? 10 : 15,
+    borderRadius: 6,
+    border: "1px solid #ccc",
+    fontSize: isMobile ? 14 : 16,
+  };
+
+  const submitBtnStyle = {
+    padding: isMobile ? "8px 15px" : "10px 20px",
+    background: "#7e57c2",
+    color: "#fff",
+    border: "none",
+    borderRadius: 8,
+    cursor: "pointer",
+    fontSize: isMobile ? 14 : 16,
+    width: isMobile ? "100%" : "auto",
+  };
+
+  // --- Loader State ---
+  if (loading)
+    return (
+      <p style={{ textAlign: "center", marginTop: 50, fontSize: 18 }}>
+        Loading student data...
+      </p>
+    );
+
+  // --- Render UI ---
   return (
     <>
       <TopBar />
@@ -401,51 +493,121 @@ function StudentPortal() {
       <NewMenu isOpen={open} onLogout={logoutHandler} />
 
       <div style={containerStyle}>
-        <h2>📝 Submit Complaint</h2>
-        <form onSubmit={handleComplaint} style={{ maxWidth: 500, margin: "auto" }}>
-          <input
-            style={inputStyle}
-            type="text"
-            placeholder="Enter Your Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <input
-            style={inputStyle}
-            type="text"
-            placeholder="Enter Your Branch"
-            value={branch}
-            onChange={(e) => setBranch(e.target.value)}
-            required
-          />
-          <input
-            style={inputStyle}
-            type="text"
-            placeholder="Enter Your Pin Number"
-            value={pinNumber}
-            onChange={(e) => setPinNumber(e.target.value)}
-            required
-          />
-          <input
-            style={inputStyle}
-            type="email"
-            placeholder="Enter Your Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <textarea
-            style={inputStyle}
-            placeholder="Enter Your Complaint"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            required
-          />
-          <button style={submitBtnStyle} type="submit" disabled={complaintLoading}>
-            {complaintLoading ? "Submitting..." : "Submit Complaint"}
-          </button>
-        </form>
+        <header style={headerStyle}>
+          <h1>🎓 Student Portal</h1>
+          <p style={{ fontSize: isMobile ? 14 : 16 }}>
+            Your central hub for timetables, notes, notices, and complaints.
+          </p>
+        </header>
+
+        {/* Complaint Section */}
+        <section style={sectionStyle}>
+          <h2 style={headingStyle}>📝 Submit Complaint</h2>
+          <form style={formStyle} onSubmit={handleComplaint}>
+            <input
+              style={inputStyle}
+              type="text"
+              placeholder="Enter Your Name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <input
+              style={inputStyle}
+              type="text"
+              placeholder="Enter Your Branch"
+              value={branch}
+              onChange={(e) => setBranch(e.target.value)}
+              required
+            />
+            <input
+              style={inputStyle}
+              type="text"
+              placeholder="Enter Your Pin Number"
+              value={pinNumber}
+              onChange={(e) => setPinNumber(e.target.value)}
+              required
+            />
+            <textarea
+              style={{ ...inputStyle, minHeight: isMobile ? 80 : 100 }}
+              placeholder="Enter Your Complaint"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              required
+            />
+            <button style={submitBtnStyle} type="submit" disabled={complaintLoading}>
+              {complaintLoading ? "Submitting..." : "Submit Complaint"}
+            </button>
+          </form>
+        </section>
+
+        {/* Timetables Section */}
+        <section style={sectionStyle}>
+          <h2 style={headingStyle}>📅 Timetables</h2>
+          <div style={cardsContainer}>
+            {timetables.length === 0 ? (
+              <p>No timetables available.</p>
+            ) : (
+              timetables.map((t) => (
+                <div key={t._id} style={card}>
+                  <h3>{t.semester}</h3>
+                  <img
+                    src={`${API_URL}/uploads/${t.image}`}
+                    alt={`Timetable ${t.semester}`}
+                    style={cardImage}
+                  />
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* Notes Section */}
+        <section style={sectionStyle}>
+          <h2 style={headingStyle}>📚 Notes</h2>
+          <div style={cardsContainer}>
+            {notes.length === 0 ? (
+              <p>No notes available.</p>
+            ) : (
+              notes.map((n) => (
+                <div key={n._id} style={card}>
+                  <h3>{n.subject}</h3>
+                  <p>
+                    <strong>Branch:</strong> {n.branch}
+                  </p>
+                  <p>
+                    <strong>Semester:</strong> {n.semester}
+                  </p>
+                  <a
+                    href={`${API_URL}/uploads/${n.file}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={downloadBtn}
+                  >
+                    Download
+                  </a>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* Notices Section */}
+        <section style={sectionStyle}>
+          <h2 style={headingStyle}>📰 Notices</h2>
+          <div style={cardsContainer}>
+            {notices.length === 0 ? (
+              <p>No notices available.</p>
+            ) : (
+              notices.map((n) => (
+                <div key={n._id} style={{ ...card, background: "#ffecb3" }}>
+                  <h3>{n.title}</h3>
+                  <p>{n.message}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </section>
       </div>
 
       <Footer />
