@@ -1,21 +1,24 @@
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 
 function Footer() {
   const [visitCount, setVisitCount] = useState(0);
+useEffect(() => {
+  const namespace = "mycollegeportal";
+  const key = "lifetime_visits";
 
-  useEffect(() => {
-    fetch("https://api.visitorapi.net/api/visitors?domain=sgmgpt.netlify.app")
-      .then(res => res.json())
-      .then(data => {
-        setVisitCount(data.visitors_total || 0);
-      })
-      .catch(err => console.error("VisitorAPI error:", err));
-  }, []);
+  fetch(`https://api.counterapi.dev/hit/${namespace}/${key}`)
+    .then(res => res.json())
+    .then(data => {
+      setVisitCount(data.value);
+    })
+    .catch(err => console.error("CounterAPI error:", err));
+}, []);
+
 
   return (
-    <div style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
-      👀 Visitors: {visitCount}
-      <br />©2025 - Computer Science and Engineering
+    <div className="footer" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
+      👀 Visitors: {visitCount} <br />
+      ©2025 - Computer Science and Engineering
     </div>
   );
 }
