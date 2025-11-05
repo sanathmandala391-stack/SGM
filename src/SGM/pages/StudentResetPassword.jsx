@@ -34,7 +34,7 @@ function StudentResetPassword() {
 
       if (response.ok) {
         setMessage("✅ Password reset successful. Redirecting...");
-        setTimeout(() => navigate("/studentLogin"), 2000);
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setMessage(data.message || "❌ Reset failed");
       }
