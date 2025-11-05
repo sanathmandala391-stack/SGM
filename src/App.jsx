@@ -41,6 +41,7 @@ function App() {
         <Route path="/adminLogin" element={<AdminLogin/>}/>
       <Route path="/studentForgotPassword" element={<StudentForgotPassword />} />
 <Route path="/reset-password/:role/:token" element={<StudentResetPassword />} />
+<Route path="/facultyForgotPassword" element={<FacultyForgotPassword />} />
 
         
 

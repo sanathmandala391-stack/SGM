@@ -101,6 +101,7 @@ function FacultyLogin(){
               <button type="submit">Submit</button>
               <br></br>
               <p onClick={()=>navigate("/facultyregister")}>Did'nt Register Click Here to Register</p>
+                            <p onClick={() => navigate("/facultyForgotPassword")}>Forgot Password?</p>
             </div>
           </form>
           )}
