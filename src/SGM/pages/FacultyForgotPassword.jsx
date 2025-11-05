@@ -15,11 +15,12 @@ function FacultyForgotPassword() {
     setMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/api/forgot-password/faculty`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
+      const response = await fetch(`${API_URL}/api/forgot-password`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ email, role: "faculty" }),
+});
+
 
       const data = await response.json();
 
