@@ -102,6 +102,7 @@ function StudentLogin({onLoginSuccess}){
               <button type="submit">Submit</button>
               <br></br>
               <p onClick={()=>navigate("/Register")}>Did'nt Register Click Here to Register</p>
+              <p onClick={() => navigate("/studentForgotPassword")}>Forgot Password?</p>
             </div>
           </form>
           )}
