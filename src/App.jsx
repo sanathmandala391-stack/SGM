@@ -19,6 +19,8 @@ import AdminRegister from "./SGM/components/forms/AdminRegister";
 import AdminLogin from "./SGM/components/forms/AdminLogin";
 import Admin from "./SGM/pages/Admin";
 import AdminProtectedRoute from "./SGM/components/routes/AdminProtectedRoute";
+import StudentForgotPassword from "./SGM/pages/StudentForgotPassword";
+import StudentResetPassword from "./SGM/pages/StudentResetPassword";
 
 function App() {
   return (
