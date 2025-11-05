@@ -24,7 +24,7 @@ function StudentResetPassword() {
     setMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/email/reset-password/${role}/${token}`, {
+      const response = await fetch(`${API_URL}/api/reset-password/${role}/${token}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password }),

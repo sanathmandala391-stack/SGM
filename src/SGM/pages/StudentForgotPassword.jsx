@@ -15,7 +15,7 @@ function StudentForgotPassword() {
     setMessage("");
 
     try {
-      const response = await fetch(`${API_URL}/email/forgot-password`, {
+      const response = await fetch(`${API_URL}/api/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, role: "student" }),
@@ -58,7 +58,7 @@ function StudentForgotPassword() {
 
           <div className="btnSubmit">
             <button type="submit">Send Reset Link</button>
-            <p onClick={() => navigate("/studentLogin")}>Back to Login</p>
+            <p onClick={() => navigate("/login")}>Back to Login</p>
           </div>
 
           {message && <p style={{ marginTop: "10px", color: "green" }}>{message}</p>}
