@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar";
@@ -22,7 +21,7 @@ function FacultyServices() {
 
     const toggleMenu = () => setOpen(!open);
 
-  
+ 
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
@@ -32,8 +31,9 @@ function FacultyServices() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    // FIX APPLIED HERE: Checking for 'facultyId' as set in FacultyLogin
     const showTimetableHandler = () => {
-        const token = localStorage.getItem("facultyToken");
+        const token = localStorage.getItem("facultyId");
         if (token) {
             setShowTimetable(true);
             setShowNotes(false);
@@ -43,8 +43,9 @@ function FacultyServices() {
         }
     };
 
+    // FIX APPLIED HERE: Checking for 'facultyId' as set in FacultyLogin
     const showNotesHandler = () => {
-        const token = localStorage.getItem("facultyToken");
+        const token = localStorage.getItem("facultyId");
         if (token) {
             setShowNotes(true);
             setShowTimetable(false);
@@ -54,8 +55,9 @@ function FacultyServices() {
         }
     };
 
+    // FIX APPLIED HERE: Checking for 'facultyId' as set in FacultyLogin
     const showNoticeHandler = () => {
-        const token = localStorage.getItem("facultyToken");
+        const token = localStorage.getItem("facultyId");
         if (token) {
             setShowNotice(true);
             setShowNotes(false);
@@ -65,11 +67,14 @@ function FacultyServices() {
         }
     };
 
+    // FIX APPLIED HERE: Clears faculty-specific tokens and navigates to the login page
     const logoutHandler = () => {
         const confirmLogout = window.confirm("Are You Sure You Want To LogOut");
         if (confirmLogout) {
-            localStorage.removeItem("loginToken");
-            navigate("/facultyregister");
+            localStorage.removeItem("facultyId"); // Clear the main authentication token
+            localStorage.removeItem("facultyname"); // Clear the stored name
+            localStorage.removeItem("loginToken"); // Clearing any other general token just in case
+            navigate("/facultylogin"); // Navigate to faculty LOGIN
         }
     };
 
@@ -85,8 +90,6 @@ function FacultyServices() {
         color: "#4a148c",
         marginBottom: isMobile ? "20px" : "30px", 
     };
-
-   
 
     const formContainerStyle = {
         display: "flex",
@@ -108,7 +111,7 @@ function FacultyServices() {
                 showNotesHandler={showNotesHandler}
                 showNoticeHandler={showNoticeHandler}
             />
-          
+         
 
             <div style={headerStyle}>
                 <h2 style={{ fontSize: isMobile ? "1.5rem" : "2rem" }}>
@@ -126,7 +129,7 @@ function FacultyServices() {
             </div>
               <Footer/>
         </div>
-       
+        
 
     );
     

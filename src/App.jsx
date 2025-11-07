@@ -22,6 +22,9 @@ import AdminProtectedRoute from "./SGM/components/routes/AdminProtectedRoute";
 import StudentForgotPassword from "./SGM/pages/StudentForgotPassword";
 import StudentResetPassword from "./SGM/pages/StudentResetPassword";
 import FacultyForgotPassword from "./SGM/pages/FacultyForgotPassword";
+import FacultyResetPassword from "./SGM/pages/FacultyResetPassword";
+import AdminReset from "./SGM/pages/AdminReset";
+import AdminForgot from "./SGM/pages/AdminForgot";
 
 function App() {
   return (
@@ -34,15 +37,18 @@ function App() {
         <Route path="/facilities" element={<Facilities />} />
         <Route path="/faculty" element={<Faculty />} />
        <Route path="/allLogin" element={<AllLogin/>}></Route>
-          <Route path="/register" element={<Register />} />
+         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<StudentLogin />} />
         <Route path="/facultyregister" element={<FacultyRegister/>}></Route>
         <Route path="/facultylogin" element={<FacultyLogin />} />
         <Route path="/adminRegister" element={<AdminRegister/>}/>
         <Route path="/adminLogin" element={<AdminLogin/>}/>
       <Route path="/studentForgotPassword" element={<StudentForgotPassword />} />
-<Route path="/reset-password/:role/:token" element={<StudentResetPassword />} />
+<Route path="/studentResetPassword" element={<StudentResetPassword />} />
 <Route path="/facultyForgotPassword" element={<FacultyForgotPassword />} />
+<Route path="/facultyResetPassword" element={<FacultyResetPassword/>}/>
+<Route path="/adminResetPassword" element={<AdminReset/>}/>
+<Route path="/adminForgotPassword" element={<AdminForgot/>}/>
 
         
 
