@@ -145,19 +145,15 @@ function StudentLogin({ onLoginSuccess }) {
 
       const data = await response.json();
 
-      if (response.ok && data.token) {
-        alert("Login Successful!");
-        localStorage.setItem("loginToken", data.token);
-        localStorage.setItem("studentName", data.name);
+      if (response.ok) {
+  alert(data.message || "Login Successful!");
+  localStorage.setItem("studentToken", data.token); // ✅ store JWT
+  localStorage.setItem("studentName", data.name);
+  navigate("/studentPortal"); // replace with your student dashboard route
+} else {
+  alert(data.message || "Invalid credentials");
+}
 
-        setEmail("");
-        setPassword("");
-        if (onLoginSuccess) onLoginSuccess();
-
-        navigate("/studentPortal");
-      } else {
-        alert(data.error || "Invalid credentials");
-      }
     } catch (err) {
       console.error("Error:", err);
       alert("Login Failed. Please try again.");

@@ -1,20 +1,21 @@
-
-
 import React from "react";
 import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
-  const token = localStorage.getItem("loginToken");
-  const registered = localStorage.getItem("isRegistered");
+ 
+  const token = localStorage.getItem("studentToken"); 
 
-  if (!token) {
-    if (!registered) {
-      return <Navigate to="/register" replace />;
-    }
-    return <Navigate to="/login" replace />;
-  }
+  const registered = localStorage.getItem("isRegistered");
 
-  return children;
+  if (!token) {
+  
+    if (!registered) {
+      return <Navigate to="/Register" replace />; 
+    }
+    return <Navigate to="/login" replace />; 
+  }
+
+  return children;
 };
 
 export default ProtectedRoute;

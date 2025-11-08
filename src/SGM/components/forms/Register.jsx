@@ -145,12 +145,15 @@ function Register() {
 
       const data = await response.json();
 
-      if (response.ok) {
-        alert("Student Registered Successfully!");
-        navigate("/login"); 
-      } else {
-        alert(data.error || "Registration Failed");
-      }
+  if (response.ok) {
+  alert(data.message || "Student Registered Successfully!");
+  localStorage.setItem("studentToken", data.token); // ✅ store JWT
+  localStorage.setItem("studentName", data.name);
+  navigate("/login");
+} else {
+  alert(data.message || "Registration Failed");
+}
+
     } catch (err) {
       console.error("Registration Failed", err);
       alert("Registration Failed");
@@ -173,19 +176,19 @@ function Register() {
           <h3>Student Register</h3>
 
           <label>Name</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter Your Name" />
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Enter Your Name" required/>
 
           <label>Email</label>
-          <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter Your Email" />
+          <input type="text" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter Your Email" required/>
 
           <label>Pin-Number</label>
-          <input type="text" value={pinNumber} onChange={(e) => setPinNumber(e.target.value)} placeholder="Enter Your PinNumber" />
+          <input type="text" value={pinNumber} onChange={(e) => setPinNumber(e.target.value)} placeholder="Enter Your PinNumber" required />
 
           <label>Phone Number</label>
-          <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter Your Phone Number" />
+          <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Enter Your Phone Number" required />
 
           <label>Password</label>
-          <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Your Password" />
+          <input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Enter Your Password" required/>
 
           <span className="showPassword" onClick={handleShowPassword}>{showPassword ? "Hide" : "Show"}</span>
 

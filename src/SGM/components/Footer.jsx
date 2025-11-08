@@ -1,23 +1,27 @@
- import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { API_URL } from "../data/apiPath";
 
 function Footer() {
-  const [visitCount, setVisitCount] = useState(0);
-useEffect(() => {
-  const namespace = "mycollegeportal";
-  const key = "lifetime_visits";
+  const [visitCount, setVisitCount] = useState(null);
 
-  fetch(`https://api.counterapi.dev/hit/${namespace}/${key}`)
-    .then(res => res.json())
-    .then(data => {
-      setVisitCount(data.value);
-    })
-    .catch(err => console.error("CounterAPI error:", err));
-}, []);
+  useEffect(() => {
+    const fetchVisitCount = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/visitor-count`);
+        const data = await res.json();
+        setVisitCount(data.count);
+      } catch (err) {
+        console.error("Visitor API error:", err);
+        setVisitCount("N/A");
+      }
+    };
 
+    fetchVisitCount();
+  }, []);
 
   return (
-    <div className="footer" style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
-      👀 Visitors: {visitCount} <br />
+    <div style={{ textAlign: "center", padding: "20px", fontWeight: "bold" }}>
+      👀 Visitors: {visitCount === null ? "Loading..." : visitCount} <br />
       ©2025 - Computer Science and Engineering
     </div>
   );
