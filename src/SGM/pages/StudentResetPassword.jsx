@@ -67,145 +67,100 @@ export default StudentResetPassword;
 */
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { API_URL } from "../data/apiPath";
+import { auth } from "../../firebase";
 
 function StudentResetPassword() {
-  const location = useLocation();
+  const { state } = useLocation();
   const navigate = useNavigate();
-  const phone = location.state?.phone || ""; 
+  const confirmationResult = state?.confirmationResult;
+  const phone = state?.phone || "";
 
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState(""); // For displaying success/error
+  const [message, setMessage] = useState("");
 
-  const resetPassword = async (e) => {
+  const verifyOtpAndReset = async (e) => {
     e.preventDefault();
+    if (!otp || !newPassword) return alert("Please fill all fields");
+
     setLoading(true);
-    setMessage("");
-
-    if (!otp) return setMessage("Please enter OTP");
-    if (!newPassword || newPassword.length < 6)
-      return setMessage("Password must be at least 6 characters");
-
     try {
-      const res = await fetch(`${API_URL}/api/reset-password/student`, {
+      const result = await confirmationResult.confirm(otp);
+      const user = result.user;
+
+      console.log("Verified Firebase user:", user.phoneNumber);
+
+      // ✅ Backend call
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reset-password/student`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, otp, newPassword }),
+        body: JSON.stringify({ phone, newPassword }),
       });
 
       const data = await res.json();
       setMessage(data.message);
 
       if (res.ok) {
-          setTimeout(() => navigate("/login"), 2000);
+        alert("Password reset successful!");
+        navigate("/login");
+      } else {
+        alert("Error: " + data.message);
       }
     } catch (err) {
-      console.error("Error resetting password:", err);
-      setMessage("Failed to reset password. Try again.");
+      console.error("OTP verification failed:", err);
+      alert("Invalid or expired OTP");
     } finally {
-        setLoading(false);
-    }
-  };
-
-  const styles = {
-    container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#f4f7f6',
-        padding: '20px',
-    },
-    form: {
-        width: '100%',
-        maxWidth: '400px',
-        padding: '30px',
-        borderRadius: '10px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        backgroundColor: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '15px',
-    },
-    header: {
-        textAlign: 'center',
-        color: '#007bff',
-        marginBottom: '10px',
-    },
-    input: {
-        padding: '12px',
-        border: '1px solid #ccc',
-        borderRadius: '6px',
-        width: '100%',
-        boxSizing: 'border-box',
-    },
-    otpInput: { // Styling for a clear OTP input
-      padding: '12px',
-      border: '2px solid #007bff',
-      borderRadius: '6px',
-      width: '100%',
-      boxSizing: 'border-box',
-      textAlign: 'center',
-      letterSpacing: '5px',
-      fontSize: '1.2rem',
-    },
-    button: {
-        padding: '12px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        marginTop: '10px',
-        transition: 'background-color 0.3s',
-    },
-    message: {
-        textAlign: 'center',
-        marginTop: '10px',
-        fontWeight: 'bold',
-        fontSize: '0.9rem',
-        color: '#dc3545', // Default to error color
+      setLoading(false);
     }
   };
 
   return (
-    <div style={styles.container} className="authForm">
-      {loading ? (
-        <p style={{ ...styles.message, color: '#007bff' }}>Resetting password...</p>
-      ) : (
-        <form onSubmit={resetPassword} style={styles.form}>
-          <h3 style={styles.header}>Student Reset Password</h3>
-          
-          <label>Enter OTP</label>
-          <input
-            type="text"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            placeholder="Enter 6-digit OTP"
-            required
-            maxLength="6"
-            style={styles.otpInput} // Uses special OTP styling
-          />
-          
-          <label>New Password</label>
-          <input
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="Enter new password"
-            required
-            style={styles.input}
-          />
-          
-          <button type="submit" style={styles.button}>Reset Password</button>
-          
-          {message && <p style={{...styles.message, color: (message.includes('success') || message.includes('Success')) ? '#28a745' : '#dc3545'}}>{message}</p>}
-        </form>
-      )}
+    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f4f7f6" }}>
+      <form onSubmit={verifyOtpAndReset} style={{ maxWidth: "400px", background: "white", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)" }}>
+        <h3 style={{ textAlign: "center", color: "#007bff" }}>Student Reset Password</h3>
+
+        <label>Enter OTP</label>
+        <input
+          type="text"
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+          placeholder="Enter OTP"
+          required
+          maxLength="6"
+          style={{ padding: "12px", border: "1px solid #ccc", borderRadius: "6px", width: "100%" }}
+        />
+
+        <label>New Password</label>
+        <input
+          type="password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          placeholder="Enter new password"
+          required
+          style={{ padding: "12px", border: "1px solid #ccc", borderRadius: "6px", width: "100%" }}
+        />
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            padding: "12px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+            fontSize: "1rem",
+            fontWeight: "bold",
+            marginTop: "10px",
+          }}
+        >
+          {loading ? "Verifying..." : "Reset Password"}
+        </button>
+
+        {message && <p style={{ textAlign: "center" }}>{message}</p>}
+      </form>
     </div>
   );
 }

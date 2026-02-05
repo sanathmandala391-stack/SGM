@@ -73,107 +73,102 @@ export default StudentForgotPassword;
 */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../data/apiPath";
-import { FadeLoader } from "react-spinners"; // Assuming you want a loader here too
+import { FadeLoader } from "react-spinners";
+import { auth } from "firebase"
+import { RecaptchaVerifier, signInWithPhoneNumber } from "../../firebase";
 
 function StudentForgotPassword() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState(null);
   const navigate = useNavigate();
 
   const sendOtp = async (e) => {
     e.preventDefault();
+    if (!phone) return alert("Please enter your registered phone number");
+
     setLoading(true);
-
-    if (!phone) {
-        alert("Please enter your registered phone number");
-        setLoading(false);
-        return;
-    }
-
     try {
-      const res = await fetch(`${API_URL}/api/forgot-password/student`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
-      });
+      // ✅ Setup invisible reCAPTCHA
+      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
 
-      const data = await res.json();
-      if (res.ok) {
-        alert(data.message);
-        navigate("/studentResetPassword", { state: { phone } });
-      } else {
-        alert(data.message);
-      }
+      // ✅ Format with country code (+91 for India)
+      const fullPhone = phone.startsWith("+") ? phone : "+91" + phone;
+
+      // ✅ Send OTP
+      const result = await signInWithPhoneNumber(auth, fullPhone, verifier);
+      setConfirmationResult(result);
+
+      alert("OTP sent successfully!");
+navigate("/studentResetPassword", { state: { confirmationResult: result, phone: fullPhone } });
+
     } catch (err) {
       console.error("Error sending OTP:", err);
-      alert("Failed to send OTP. Try again.");
+      alert("Failed to send OTP: " + err.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   const styles = {
     container: {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: '100vh',
-        backgroundColor: '#f4f7f6',
-        padding: '20px',
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      minHeight: "100vh",
+      backgroundColor: "#f4f7f6",
+      padding: "20px",
     },
     form: {
-        width: '100%',
-        maxWidth: '400px',
-        padding: '30px',
-        borderRadius: '10px',
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        backgroundColor: 'white',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '15px',
+      width: "100%",
+      maxWidth: "400px",
+      padding: "30px",
+      borderRadius: "10px",
+      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+      backgroundColor: "white",
+      display: "flex",
+      flexDirection: "column",
+      gap: "15px",
     },
     header: {
-        textAlign: 'center',
-        color: '#007bff',
-        marginBottom: '10px',
+      textAlign: "center",
+      color: "#007bff",
+      marginBottom: "10px",
     },
     input: {
-        padding: '12px',
-        border: '1px solid #ccc',
-        borderRadius: '6px',
-        width: '100%',
-        boxSizing: 'border-box',
+      padding: "12px",
+      border: "1px solid #ccc",
+      borderRadius: "6px",
+      width: "100%",
+      boxSizing: "border-box",
     },
     button: {
-        padding: '12px',
-        backgroundColor: '#007bff',
-        color: 'white',
-        border: 'none',
-        borderRadius: '6px',
-        cursor: 'pointer',
-        fontSize: '1rem',
-        fontWeight: 'bold',
-        marginTop: '10px',
-        transition: 'background-color 0.3s',
+      padding: "12px",
+      backgroundColor: "#007bff",
+      color: "white",
+      border: "none",
+      borderRadius: "6px",
+      cursor: "pointer",
+      fontSize: "1rem",
+      fontWeight: "bold",
+      marginTop: "10px",
+      transition: "background-color 0.3s",
     },
-    loader: {
-        textAlign: 'center',
-        padding: '50px',
-    }
   };
 
   return (
-    <div style={styles.container} className="authForm">
+    <div style={styles.container}>
+      <div id="recaptcha-container"></div>
+
       {loading ? (
-        <div style={styles.loader}>
-          <FadeLoader color="#36d7b7" loading={loading} height={15} width={5} />
+        <div style={{ textAlign: "center", padding: "50px" }}>
+          <FadeLoader color="#36d7b7" height={15} width={5} />
           <p>Sending OTP...</p>
         </div>
       ) : (
         <form onSubmit={sendOtp} style={styles.form}>
           <h3 style={styles.header}>Student Forgot Password</h3>
-          
+
           <label>Registered Phone Number</label>
           <input
             type="tel"
@@ -183,12 +178,10 @@ function StudentForgotPassword() {
             required
             style={styles.input}
           />
-          
-          <button type="submit" style={styles.button}>Send OTP</button>
-          
-          <p onClick={() => navigate("/login")} style={{textAlign: 'center', color: '#6c757d', cursor: 'pointer', fontSize: '0.9rem'}}>
-            Back to Login
-          </p>
+
+          <button type="submit" style={styles.button}>
+            Send OTP
+          </button>
         </form>
       )}
     </div>
