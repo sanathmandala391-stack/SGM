@@ -551,26 +551,32 @@ function StudentPortal() {
         </section>
 
         {/* Timetables Section */}
-        <section style={sectionStyle}>
-          <h2 style={headingStyle}>📅 Timetables</h2>
-          <div style={cardsContainer}>
-            {timetables.length === 0 ? (
-              <p>No timetables available.</p>
-            ) : (
-              timetables.map((t) => (
-                <div key={t._id} style={card}>
-                  <h3>{t.semester}</h3>
-                  <img
-                    src={`${API_URL}/uploads/${t.image}`}
-                    alt={`Timetable ${t.semester}`}
-                    style={cardImage}
-                  />
-                </div>
-              ))
-            )}
-          </div>
-        </section>
 
+        {/* Updated Timetables Section inside StudentPortal.jsx */}
+<section style={sectionStyle}>
+  <h2 style={headingStyle}>📅 Timetables</h2>
+  <div style={cardsContainer}>
+    {timetables.length === 0 ? (
+      <p>No timetables available.</p>
+    ) : (
+      timetables.map((t) => (
+        <div key={t._id} style={card}>
+          <h3>{t.semester}</h3>
+          <img
+            /* REMOVED ${API_URL}/uploads/ because 't.image' is now Base64 */
+            src={t.image} 
+            alt={`Timetable ${t.semester}`}
+            style={cardImage}
+            onError={(e) => {
+              console.error("Image failed to load");
+              e.target.src = "https://via.placeholder.com/150?text=No+Image";
+            }}
+          />
+        </div>
+      ))
+    )}
+  </div>
+</section>
         {/* Notes Section */}
         <section style={sectionStyle}>
           <h2 style={headingStyle}>📚 Notes</h2>
