@@ -86,7 +86,6 @@ import { FadeLoader } from "react-spinners";
  export default AddTimetable;
 
 */
-
 import React, { useState } from "react";
 import { API_URL } from "../../data/apiPath";
 import { FadeLoader } from "react-spinners";
@@ -103,14 +102,12 @@ function AddTimetable() {
     const handleAddtimetable = async (e) => {
         e.preventDefault();
         
+        // 1. Retrieve token
         const loginToken = localStorage.getItem('loginToken');
-        if (!loginToken) {
+        
+        // 2. Critical Check
+        if (!loginToken || loginToken === "undefined") {
             alert("Please Login To continue..");
-            return; // Stop execution if no token
-        }
-
-        if (!image) {
-            alert("Please select an image");
             return;
         }
 
@@ -123,9 +120,9 @@ function AddTimetable() {
             const response = await fetch(`${API_URL}/api/timetable`, {
                 method: "POST",
                 headers: {
-                    'token': loginToken // Send token exactly as middleware expects
+                    'token': loginToken // This MUST match req.headers.token in backend
                 },
-                body: formData // No 'Content-Type' header here!
+                body: formData 
             });
 
             const data = await response.json();
@@ -134,13 +131,13 @@ function AddTimetable() {
                 alert("Timetable Added Successfully");
                 setSemester("");
                 setImage(null);
-                e.target.reset(); // Resets the file input field
+                e.target.reset(); 
             } else {
-                alert(data.error || "Failed to add timetable");
+                alert(data.error || data.message || "Failed to add timetable");
             }
         } catch (err) {
             console.error("Frontend Error:", err);
-            alert("Error: Could not connect to server");
+            alert("Connection error. Check console.");
         } finally {
             setLoading(false);
         }
@@ -148,14 +145,12 @@ function AddTimetable() {
 
     return (
         <div className="firmSection">
-            {loading && (
+            {loading ? (
                 <div className="loaderSection">
-                    <FadeLoader color="#36d7b7" loading={loading} height={15} width={5} radius={2} margin={2} />
-                    <p>Adding Timetable...</p>
+                    <FadeLoader color="#36d7b7" />
+                    <p>Processing...</p>
                 </div>
-            )}
-            
-            {!loading && (
+            ) : (
                 <form className="tableForm" onSubmit={handleAddtimetable}>
                     <h3>Add Timetable</h3>
                     <label>Semester</label>
@@ -166,12 +161,8 @@ function AddTimetable() {
                         placeholder="e.g. 1st Semester" 
                         required 
                     />
-                    <br />
-                    
                     <label>Upload Image</label>
                     <input type="file" onChange={handleImageupload} required />
-                    <br />
-
                     <div className="btnSubmit">
                         <button type="submit">Submit</button>
                     </div>
