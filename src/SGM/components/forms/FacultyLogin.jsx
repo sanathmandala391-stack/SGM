@@ -25,12 +25,23 @@ function FacultyLogin() {
 
       const data = await response.json();
 
-      if (response.ok) {
+      /*if (response.ok) {
         localStorage.setItem("facultyId", data.facultyId);
         const nameToStore = data.facultyname || "Faculty Member"; 
         localStorage.setItem("facultyname", nameToStore);
         navigate("/facultyservices");
-      } else {
+      }*/
+     if (response.ok) {
+        // Save the token with the correct name!
+        localStorage.setItem("loginToken", data.token); 
+        
+        localStorage.setItem("facultyId", data.facultyId);
+        localStorage.setItem("facultyname", data.facultyname);
+        
+        alert("Login successful!");
+        navigate("/facultyservices");
+      }
+      else {
         alert(data.message || "Invalid credentials");
       }
     } catch (err) {
