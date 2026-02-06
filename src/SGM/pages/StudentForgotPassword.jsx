@@ -74,114 +74,65 @@ export default StudentForgotPassword;
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
-import { auth } from "firebase"
-import { RecaptchaVerifier, signInWithPhoneNumber } from "../../firebase";
+import axios from "axios"; 
 
 function StudentForgotPassword() {
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [confirmationResult, setConfirmationResult] = useState(null);
   const navigate = useNavigate();
 
-  const sendOtp = async (e) => {
+  const handleSendEmail = async (e) => {
     e.preventDefault();
-    if (!phone) return alert("Please enter your registered phone number");
+    if (!email) return alert("Please enter your registered email");
 
     setLoading(true);
     try {
-      // ✅ Setup invisible reCAPTCHA
-      const verifier = new RecaptchaVerifier(auth, "recaptcha-container", { size: "invisible" });
+      // ✅ Change this URL to your actual backend URL
+      const response = await axios.post("http://localhost:5000/api/forgot-password", {
+        email: email
+      });
 
-      // ✅ Format with country code (+91 for India)
-      const fullPhone = phone.startsWith("+") ? phone : "+91" + phone;
-
-      // ✅ Send OTP
-      const result = await signInWithPhoneNumber(auth, fullPhone, verifier);
-      setConfirmationResult(result);
-
-      alert("OTP sent successfully!");
-navigate("/studentResetPassword", { state: { confirmationResult: result, phone: fullPhone } });
-
+      if (response.data.success) {
+        alert("OTP sent to your email!");
+        // Passing email to the next page so the user knows where they sent it
+        navigate("/studentResetPassword", { state: { email: email } });
+      }
     } catch (err) {
-      console.error("Error sending OTP:", err);
-      alert("Failed to send OTP: " + err.message);
+      console.error("Error:", err);
+      alert(err.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   const styles = {
-    container: {
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "100vh",
-      backgroundColor: "#f4f7f6",
-      padding: "20px",
-    },
-    form: {
-      width: "100%",
-      maxWidth: "400px",
-      padding: "30px",
-      borderRadius: "10px",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-      backgroundColor: "white",
-      display: "flex",
-      flexDirection: "column",
-      gap: "15px",
-    },
-    header: {
-      textAlign: "center",
-      color: "#007bff",
-      marginBottom: "10px",
-    },
-    input: {
-      padding: "12px",
-      border: "1px solid #ccc",
-      borderRadius: "6px",
-      width: "100%",
-      boxSizing: "border-box",
-    },
-    button: {
-      padding: "12px",
-      backgroundColor: "#007bff",
-      color: "white",
-      border: "none",
-      borderRadius: "6px",
-      cursor: "pointer",
-      fontSize: "1rem",
-      fontWeight: "bold",
-      marginTop: "10px",
-      transition: "background-color 0.3s",
-    },
+    container: { display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f4f7f6", padding: "20px" },
+    form: { width: "100%", maxWidth: "400px", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", backgroundColor: "white", display: "flex", flexDirection: "column", gap: "15px" },
+    header: { textAlign: "center", color: "#007bff", marginBottom: "10px" },
+    input: { padding: "12px", border: "1px solid #ccc", borderRadius: "6px", width: "100%", boxSizing: "border-box" },
+    button: { padding: "12px", backgroundColor: "#007bff", color: "white", border: "none", borderRadius: "6px", cursor: "pointer", fontSize: "1rem", fontWeight: "bold", marginTop: "10px" },
   };
 
   return (
     <div style={styles.container}>
-      <div id="recaptcha-container"></div>
-
       {loading ? (
         <div style={{ textAlign: "center", padding: "50px" }}>
           <FadeLoader color="#36d7b7" height={15} width={5} />
           <p>Sending OTP...</p>
         </div>
       ) : (
-        <form onSubmit={sendOtp} style={styles.form}>
-          <h3 style={styles.header}>Student Forgot Password</h3>
-
-          <label>Registered Phone Number</label>
+        <form onSubmit={handleSendEmail} style={styles.form}>
+          <h3 style={styles.header}>Reset Password</h3>
+          <label>Registered Email Address</label>
           <input
-            type="tel"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder="Enter phone number"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter your email"
             required
             style={styles.input}
           />
-
-          <button type="submit" style={styles.button}>
-            Send OTP
-          </button>
+          <button type="submit" style={styles.button}>Send OTP</button>
         </form>
       )}
     </div>

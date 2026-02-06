@@ -67,13 +67,14 @@ export default StudentResetPassword;
 */
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { auth } from "../../firebase";
+import axios from "axios"; // Using axios to keep it consistent
 
 function StudentResetPassword() {
   const { state } = useLocation();
   const navigate = useNavigate();
-  const confirmationResult = state?.confirmationResult;
-  const phone = state?.phone || "";
+  
+  // We now get the email from the state passed by the previous page
+  const email = state?.email || "";
 
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -86,30 +87,23 @@ function StudentResetPassword() {
 
     setLoading(true);
     try {
-      const result = await confirmationResult.confirm(otp);
-      const user = result.user;
-
-      console.log("Verified Firebase user:", user.phoneNumber);
-
-      // ✅ Backend call
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/reset-password/student`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, newPassword }),
+      // ✅ No Firebase! We send the OTP, Email, and New Password to YOUR backend.
+      // Your backend should verify the OTP and then update the password in MongoDB.
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/reset-password/student`, {
+        email,
+        otp,
+        newPassword
       });
 
-      const data = await res.json();
-      setMessage(data.message);
-
-      if (res.ok) {
+      if (res.data.success || res.status === 200) {
         alert("Password reset successful!");
         navigate("/login");
       } else {
-        alert("Error: " + data.message);
+        alert("Error: " + res.data.message);
       }
     } catch (err) {
-      console.error("OTP verification failed:", err);
-      alert("Invalid or expired OTP");
+      console.error("Verification failed:", err);
+      alert(err.response?.data?.message || "Invalid or expired OTP");
     } finally {
       setLoading(false);
     }
@@ -117,18 +111,22 @@ function StudentResetPassword() {
 
   return (
     <div style={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "100vh", backgroundColor: "#f4f7f6" }}>
-      <form onSubmit={verifyOtpAndReset} style={{ maxWidth: "400px", background: "white", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)" }}>
-        <h3 style={{ textAlign: "center", color: "#007bff" }}>Student Reset Password</h3>
+      <form onSubmit={verifyOtpAndReset} style={{ width: "100%", maxWidth: "400px", background: "white", padding: "30px", borderRadius: "10px", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", display: "flex", flexDirection: "column", gap: "15px" }}>
+        <h3 style={{ textAlign: "center", color: "#007bff", margin: "0 0 10px 0" }}>Student Reset Password</h3>
+
+        <p style={{ fontSize: "0.9rem", color: "#666", textAlign: "center" }}>
+          Resetting password for: <strong>{email}</strong>
+        </p>
 
         <label>Enter OTP</label>
         <input
           type="text"
           value={otp}
           onChange={(e) => setOtp(e.target.value)}
-          placeholder="Enter OTP"
+          placeholder="Enter 6-digit OTP"
           required
           maxLength="6"
-          style={{ padding: "12px", border: "1px solid #ccc", borderRadius: "6px", width: "100%" }}
+          style={{ padding: "12px", border: "1px solid #ccc", borderRadius: "6px", width: "100%", boxSizing: "border-box" }}
         />
 
         <label>New Password</label>
@@ -138,7 +136,7 @@ function StudentResetPassword() {
           onChange={(e) => setNewPassword(e.target.value)}
           placeholder="Enter new password"
           required
-          style={{ padding: "12px", border: "1px solid #ccc", borderRadius: "6px", width: "100%" }}
+          style={{ padding: "12px", border: "1px solid #ccc", borderRadius: "6px", width: "100%", boxSizing: "border-box" }}
         />
 
         <button
@@ -150,16 +148,17 @@ function StudentResetPassword() {
             color: "white",
             border: "none",
             borderRadius: "6px",
-            cursor: "pointer",
+            cursor: loading ? "not-allowed" : "pointer",
             fontSize: "1rem",
             fontWeight: "bold",
             marginTop: "10px",
+            opacity: loading ? 0.7 : 1
           }}
         >
           {loading ? "Verifying..." : "Reset Password"}
         </button>
 
-        {message && <p style={{ textAlign: "center" }}>{message}</p>}
+        {message && <p style={{ textAlign: "center", color: "green" }}>{message}</p>}
       </form>
     </div>
   );

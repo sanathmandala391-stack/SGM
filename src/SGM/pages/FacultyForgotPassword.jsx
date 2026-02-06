@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FadeLoader } from "react-spinners";
-import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "../../firebase";
+//import { auth, RecaptchaVerifier, signInWithPhoneNumber } from "../../firebase";
 
-function StudentForgotPassword() {
+function FacultyForgotPassword() {
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -87,4 +87,4 @@ function StudentForgotPassword() {
   );
 }
 
-export default StudentForgotPassword;
+export default FacultyForgotPassword;
