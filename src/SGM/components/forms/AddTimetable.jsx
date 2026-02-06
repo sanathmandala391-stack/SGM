@@ -86,6 +86,8 @@ import { FadeLoader } from "react-spinners";
  export default AddTimetable;
 
 */
+/*
+
 import React, { useState } from "react";
 import { API_URL } from "../../data/apiPath";
 import { FadeLoader } from "react-spinners";
@@ -166,6 +168,69 @@ function AddTimetable() {
                     <div className="btnSubmit">
                         <button type="submit">Submit</button>
                     </div>
+                </form>
+            )}
+        </div>
+    );
+}
+
+export default AddTimetable;
+*/
+
+import React, { useState } from "react";
+import { API_URL } from "../../data/apiPath";
+import { FadeLoader } from "react-spinners";
+
+function AddTimetable() {
+    const [semester, setSemester] = useState("");
+    const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleAddtimetable = async (e) => {
+        e.preventDefault();
+        const loginToken = localStorage.getItem('loginToken');
+        
+        if (!loginToken) {
+            alert("Please Login To continue..");
+            return;
+        }
+
+        setLoading(true);
+        const formData = new FormData();
+        formData.append("semester", semester);
+        formData.append("image", image);
+
+        try {
+            const response = await fetch(`${API_URL}/api/timetable/add-timetable`, {
+                method: "POST",
+                headers: { 'token': loginToken },
+                body: formData 
+            });
+
+            if (response.ok) {
+                alert("Timetable Added Successfully");
+                setSemester("");
+                setImage(null);
+                e.target.reset();
+            } else {
+                alert("Failed to add timetable");
+            }
+        } catch (err) {
+            alert("Error connecting to server");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="formContainer">
+            {loading ? <FadeLoader color="#36d7b7" /> : (
+                <form onSubmit={handleAddtimetable}>
+                    <h3>Add Timetable</h3>
+                    <input type="text" placeholder="Semester" value={semester} 
+                           onChange={(e) => setSemester(e.target.value)} required />
+                    <input type="file" onChange={(e) => setImage(e.target.files[0])} required />
+                    <button type="submit">Submit</button>
                 </form>
             )}
         </div>
