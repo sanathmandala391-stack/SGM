@@ -503,6 +503,7 @@ function StudentPortal() {
         </header>
 
         {/* Complaint Section */}
+/*
         <section style={sectionStyle}>
           <h2 style={headingStyle}>📝 Submit Complaint</h2>
           <form style={formStyle} onSubmit={handleComplaint}>
@@ -553,6 +554,7 @@ function StudentPortal() {
         {/* Timetables Section */}
 
         {/* Updated Timetables Section inside StudentPortal.jsx */}
+/*
 <section style={sectionStyle}>
   <h2 style={headingStyle}>📅 Timetables</h2>
   <div style={cardsContainer}>
@@ -564,6 +566,7 @@ function StudentPortal() {
           <h3>{t.semester}</h3>
           <img
             /* REMOVED ${API_URL}/uploads/ because 't.image' is now Base64 */
+/*
             src={t.image} 
             alt={`Timetable ${t.semester}`}
             style={cardImage}
@@ -578,6 +581,7 @@ function StudentPortal() {
   </div>
 </section>
         {/* Notes Section */}
+/*
         <section style={sectionStyle}>
           <h2 style={headingStyle}>📚 Notes</h2>
           <div style={cardsContainer}>
@@ -608,6 +612,7 @@ function StudentPortal() {
         </section>
 
         {/* Notices Section */}
+/*
         <section style={sectionStyle}>
           <h2 style={headingStyle}>📰 Notices</h2>
           <div style={cardsContainer}>
