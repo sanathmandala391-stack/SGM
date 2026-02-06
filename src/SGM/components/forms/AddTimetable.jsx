@@ -1,4 +1,4 @@
- import React, { useState } from  "react"
+/* import React, { useState } from  "react"
 import { API_URL } from "../../data/apiPath";
 import { FadeLoader } from "react-spinners";
  
@@ -84,3 +84,101 @@ import { FadeLoader } from "react-spinners";
     )
  }
  export default AddTimetable;
+
+*/
+
+import React, { useState } from "react";
+import { API_URL } from "../../data/apiPath";
+import { FadeLoader } from "react-spinners";
+
+function AddTimetable() {
+    const [semester, setSemester] = useState("");
+    const [image, setImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleImageupload = (e) => {
+        setImage(e.target.files[0]);
+    };
+
+    const handleAddtimetable = async (e) => {
+        e.preventDefault();
+        
+        const loginToken = localStorage.getItem('loginToken');
+        if (!loginToken) {
+            alert("Please Login To continue..");
+            return; // Stop execution if no token
+        }
+
+        if (!image) {
+            alert("Please select an image");
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const formData = new FormData();
+            formData.append("semester", semester);
+            formData.append("image", image);
+
+            const response = await fetch(`${API_URL}/api/timetable`, {
+                method: "POST",
+                headers: {
+                    'token': loginToken // Send token exactly as middleware expects
+                },
+                body: formData // No 'Content-Type' header here!
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Timetable Added Successfully");
+                setSemester("");
+                setImage(null);
+                e.target.reset(); // Resets the file input field
+            } else {
+                alert(data.error || "Failed to add timetable");
+            }
+        } catch (err) {
+            console.error("Frontend Error:", err);
+            alert("Error: Could not connect to server");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="firmSection">
+            {loading && (
+                <div className="loaderSection">
+                    <FadeLoader color="#36d7b7" loading={loading} height={15} width={5} radius={2} margin={2} />
+                    <p>Adding Timetable...</p>
+                </div>
+            )}
+            
+            {!loading && (
+                <form className="tableForm" onSubmit={handleAddtimetable}>
+                    <h3>Add Timetable</h3>
+                    <label>Semester</label>
+                    <input 
+                        type="text" 
+                        value={semester} 
+                        onChange={(e) => setSemester(e.target.value)} 
+                        placeholder="e.g. 1st Semester" 
+                        required 
+                    />
+                    <br />
+                    
+                    <label>Upload Image</label>
+                    <input type="file" onChange={handleImageupload} required />
+                    <br />
+
+                    <div className="btnSubmit">
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            )}
+        </div>
+    );
+}
+
+export default AddTimetable;
