@@ -47,48 +47,24 @@
     <!-- ✅ Google Verification -->
     <meta name="google-site-verification" content="y6FNxqctYBVeomwWak9HlIeg5sQFg_roI8ybt9imzaI" />
 
-    <!-- ✅ SEO TITLE (IMPROVED) -->
-    <title>SGM - Student Management System</title>
+    <!-- ✅ SEO TITLE -->
+    <title>SGM - Student Management System for Diploma Colleges</title>
 
     <!-- ✅ SEO DESCRIPTION -->
-    <meta name="description" content="SGM is a student management system for diploma colleges to manage attendance, notes, and student data." />
+    <meta name="description" content="SGM is a student management system for diploma colleges to manage attendance, notes, notices, and student data efficiently." />
 
     <!-- ✅ KEYWORDS -->
-    <meta name="keywords" content="SGM, student management system, diploma attendance system, college portal" />
+    <meta name="keywords" content="SGM, student management system, diploma attendance system, college portal, Telangana diploma" />
 
     <!-- ✅ AUTHOR -->
     <meta name="author" content="Sanath" />
   </head>
 
   <body>
-    <!-- React Root -->
+    <!-- ✅ React Root ONLY -->
     <div id="root"></div>
 
-    <!-- Visitor Counter UI -->
-    <div id="visitor-counter" style="font-weight:bold; text-align:center; margin-top:20px;">
-      👀 Visitors today: <span id="visitCount">Loading...</span>
-    </div>
-
-    <!-- React App -->
+    <!-- ✅ React App -->
     <script type="module" src="/src/main.jsx"></script>
-
-    <!-- ✅ FIXED Visitor Counter Script -->
-    <script>
-      const namespace = "mycollegeportal";
-      const today = new Date().toISOString().split('T')[0];
-
-      // unique key per day
-      const key = "daily_visits_" + today;
-
-      fetch(`https://api.countapi.xyz/hit/${namespace}/${key}`)
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("visitCount").textContent = data.value;
-        })
-        .catch(() => {
-          document.getElementById("visitCount").textContent = "Error";
-        });
-    </script>
-
   </body>
 </html>
