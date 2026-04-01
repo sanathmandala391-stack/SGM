@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -30,7 +30,66 @@
       document.getElementById("visitCount").textContent = data.value;
     });
 
+
+
     </script>
   </body>
+
+
+
+
+ <!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="google-site-verification" content="y6FNxqctYBVeomwWak9HlIeg5sQFg_roI8ybt9imzaI" />
+    <!-- ✅ SEO TITLE -->
+    <title>SGM</title>
+
+    <!-- ✅ SEO DESCRIPTION -->
+    <meta name="description" content="SGM" />
+
+    <!-- ✅ KEYWORDS -->
+    <meta name="keywords" content="SGM" />
+
+    <!-- ✅ AUTHOR -->
+    <meta name="author" content="sanath" />
+
+  </head>
+
+  <body>
+    <div id="root"></div>
+
+    <!-- Visitor Counter UI -->
+    <div id="visitor-counter" style="font-weight:bold; text-align:center; margin-top:20px;">
+      👀 Visitors today: <span id="visitCount">0</span>
+    </div>
+
+    <!-- React App -->
+    <script type="module" src="/src/main.jsx"></script>
+
+    <!-- Visitor Counter Script -->
+    <script>
+      const namespace = "mycollegeportal";
+      const key = "daily_visits";
+      const today = new Date().toISOString().split('T')[0];
+
+      const savedDate = localStorage.getItem("visitDate");
+      if (savedDate !== today) {
+        localStorage.setItem("visitDate", today);
+        fetch(`https://api.countapi.xyz/set/${namespace}/${key}${today}?value=0`);
+      }
+
+      fetch(`https://api.countapi.xyz/hit/${namespace}/${key}${today}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById("visitCount").textContent = data.value;
+        });
+    </script>
+
+  </body>
 </html>
+</html> -->
 
