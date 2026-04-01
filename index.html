@@ -45,7 +45,6 @@
     </script>
   </body> -->
 
-
 <!doctype html>
 <html lang="en">
   <head>
@@ -62,30 +61,27 @@
 
     <script type="module" src="/src/main.jsx"></script>
 
-    <div id="visitor-counter" style="font-weight:bold; text-align:center; margin-top:20px; font-family: sans-serif;">
+    <div id="visitor-counter" style="font-weight:bold; text-align:center; margin-top:20px; font-family: Arial, sans-serif;">
       👀 Visitors today: <span id="visitCount">0</span>
     </div>
 
     <script>
-      const namespace = "mycollegeportal";
-      const key = "daily_visits";
-      const today = new Date().toISOString().split('T')[0];
+      (function() {
+        const namespace = "mycollegeportal";
+        const key = "daily_visits";
+        const today = new Date().toISOString().split('T')[0];
 
-      const savedDate = localStorage.getItem("visitDate");
-      if (savedDate !== today) {
-        localStorage.setItem("visitDate", today);
-        // We use a fallback because the API might be slow
-        fetch(`https://api.countapi.xyz/create?namespace=${namespace}&key=${key}${today}&value=0`).catch(() => {});
-      }
-
-      fetch(`https://api.countapi.xyz/hit/${namespace}/${key}${today}`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.value) {
-            document.getElementById("visitCount").textContent = data.value;
-          }
-        })
-        .catch(err => console.log("Counter currently unavailable"));
+        fetch(`https://api.countapi.xyz/hit/${namespace}/${key}${today}`)
+          .then(res => res.json())
+          .then(data => {
+            if (data && data.value) {
+              document.getElementById("visitCount").textContent = data.value;
+            }
+          })
+          .catch(() => {
+            console.log("Visitor counter API is currently offline.");
+          });
+      })();
     </script>
   </body>
 </html>
