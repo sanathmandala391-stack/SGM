@@ -52,37 +52,12 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>sgm</title>
+    <title>SGM | Official Polytechnic</title>
   </head>
   <body>
     <!-- React root -->
     <div id="root"></div>
-
-    <!-- Visitor counter -->
-    <div id="visitor-counter" style="font-weight:bold; text-align:center; margin-top:20px;">
-      👀 Visitors today: <span id="visitCount">0</span>
-    </div>
-
-    <!-- React script -->
+    <!-- React main script -->
     <script type="module" src="/src/main.jsx"></script>
-
-    <!-- Visitor counter script -->
-    <script>
-      const namespace = "mycollegeportal";
-      const key = "daily_visits";
-      const today = new Date().toISOString().split('T')[0];
-
-      const savedDate = localStorage.getItem("visitDate");
-      if (savedDate !== today) {
-        localStorage.setItem("visitDate", today);
-        fetch(`https://api.countapi.xyz/set/${namespace}/${key}${today}?value=0`);
-      }
-
-      fetch(`https://api.countapi.xyz/hit/${namespace}/${key}${today}`)
-        .then(res => res.json())
-        .then(data => {
-          document.getElementById("visitCount").textContent = data.value;
-        });
-    </script>
   </body>
 </html>
