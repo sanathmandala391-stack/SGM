@@ -53,30 +53,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>sgm</title>
   </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx">
+<body>
+  <div id="root"></div>
 
-      <div id="visitor-counter" style="font-weight:bold; text-align:center; margin-top:20px;">
-  👀 Visitors today: <span id="visitCount">0</span>
-</div>
+  <!-- ✅ Visitor Counter UI -->
+  <div id="visitor-counter" style="font-weight:bold; text-align:center; margin-top:20px;">
+    👀 Visitors today: <span id="visitCount">0</span>
+  </div>
 
-  const namespace = "mycollegeportal";
-  const key = "daily_visits";
-  const today = new Date().toISOString().split('T')[0];
+  <!-- React App -->
+  <script type="module" src="/src/main.jsx"></script>
 
-  const savedDate = localStorage.getItem("visitDate");
-  if (savedDate !== today) {
-    localStorage.setItem("visitDate", today);
-    fetch(`https://api.countapi.xyz/set/${namespace}/${key}${today}?value=0`);
-  }
+  <!-- ✅ Your counter script -->
+  <script>
+    const namespace = "mycollegeportal";
+    const key = "daily_visits";
+    const today = new Date().toISOString().split('T')[0];
 
-  fetch(`https://api.countapi.xyz/hit/${namespace}/${key}${today}`)
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById("visitCount").textContent = data.value;
-    });
+    const savedDate = localStorage.getItem("visitDate");
+    if (savedDate !== today) {
+      localStorage.setItem("visitDate", today);
+      fetch(`https://api.countapi.xyz/set/${namespace}/${key}${today}?value=0`);
+    }
 
-    </script>
-  </body>
+    fetch(`https://api.countapi.xyz/hit/${namespace}/${key}${today}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("visitCount").textContent = data.value;
+      });
+  </script>
+</body>
 </html>
